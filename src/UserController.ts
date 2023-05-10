@@ -100,4 +100,15 @@ UserController.post("/login", (req, res) => {
   }
 });
 
+UserController.put("/:id", (req, res) => {
+  const user = db.find(u => u.id === Number(req.params.id));
+  if (user) {
+    user.pricingType = req.body.pricingType;
+    db[db.indexOf(user)] = user;
+    res.send(user)
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 export default UserController;
