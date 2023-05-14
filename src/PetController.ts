@@ -1,5 +1,6 @@
 import express from "express";
 import { InputPet, OutputPet } from "./model/Pet";
+import { db as USERS } from "./UserController";
 
 const PET_CATEGORIES = {
   1: { id: 1, name: "Dog" },
@@ -40,7 +41,7 @@ const PETS: { [key: number]: OutputPet } = {
         comments: "Lorem ipsun..."
       }
     ],
-    owner: 2,
+    owner: 4,
   },
   [++petCounter]: {
     id: petCounter,
@@ -99,6 +100,7 @@ PetController.post("/", (req, res) => {
     return;
   }
   PETS[++petCounter] = { ...pet, category: PET_CATEGORIES[pet.category.id] };
+  USERS[pet.owner-1].pets = USERS[pet.owner-1].pets + 1;
   res.send(pet);
 });
 

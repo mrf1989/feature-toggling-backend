@@ -4,7 +4,7 @@ import { PricingType } from "./model/PricingPlan";
 
 let userCounter = 0;
 
-const db: User[] = [
+export const db: User[] = [
   {
     "id": ++userCounter,
     "username": "mruano",
@@ -21,7 +21,7 @@ const db: User[] = [
     "password": "1234",
     "pricingType": PricingType.ADVANCED,
     "pets": 1,
-    "vets": 1,
+    "vets": 2,
     "dates": 0,
     "role": Role.CUSTOMER
   },
