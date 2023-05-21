@@ -11,6 +11,7 @@ export interface InputPet {
     comments: string
   }[],
   inHostal: boolean,
+  inAdoption: boolean,
   owner: number
 }
 
