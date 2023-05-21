@@ -10,6 +10,7 @@ const PET_CATEGORIES = {
   5: { id: 5, name: "Rodent" },
   6: { id: 6, name: "Horse" },
   7: { id: 7, name: "Fish" },
+  8: { id: 8, name: "Other"}
 };
 
 let petCounter = 0;
@@ -22,6 +23,7 @@ const PETS: { [key: number]: OutputPet } = {
     birth: "May 2021",
     category: PET_CATEGORIES[1],
     inHostal: false,
+    inAdoption: false,
     race: "Retriever",
     photo: "https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/HB4AT3D3IMI6TMPTWIZ74WAR54.jpg",
     owner: 2
@@ -32,6 +34,7 @@ const PETS: { [key: number]: OutputPet } = {
     birth: "Jul 2017",
     category: PET_CATEGORIES[2],
     inHostal: false,
+    inAdoption: false,
     race: "Common European",
     photo: "https://www.thesprucepets.com/thmb/r6z0a3Yj2CKbxYtS-Rz5YESGwBQ=/420x294/filters:no_upscale():strip_icc()/GettyImages-1185181003-b2f9c48e81304d10b93f55be4090d788.jpg",
     history: [
@@ -49,6 +52,7 @@ const PETS: { [key: number]: OutputPet } = {
     birth: "Jun 2016",
     category: PET_CATEGORIES[2],
     inHostal: false,
+    inAdoption: false,
     race: "Common European",
     owner: 1
   },
@@ -58,6 +62,7 @@ const PETS: { [key: number]: OutputPet } = {
     birth: "Nov 2013",
     category: PET_CATEGORIES[1],
     inHostal: false,
+    inAdoption: false,
     race: "American Bulldog",
     photo: "https://www.akc.org/wp-content/uploads/2020/01/American-Bulldog-standing-in-three-quarter-view.jpg",
     owner: 3
@@ -68,6 +73,7 @@ const PETS: { [key: number]: OutputPet } = {
     birth: "May 2014",
     category: PET_CATEGORIES[1],
     inHostal: false,
+    inAdoption: false,
     race: "Mastiff",
     photo: "https://www.akc.org/wp-content/uploads/2009/01/Neapolitan-Mastiff-on-lead-standing-in-the-grass-outdoors.20190813025752970.jpg",
     owner: 3
@@ -78,8 +84,20 @@ const PETS: { [key: number]: OutputPet } = {
     birth: "Feb 2019",
     category: PET_CATEGORIES[2],
     inHostal: false,
+    inAdoption: false,
     race: "Munchkin",
     owner: 3
+  },
+  [++petCounter]: {
+    id: petCounter,
+    name: "Pepito",
+    birth: "Jan 2018",
+    category: PET_CATEGORIES[1],
+    inHostal: false,
+    inAdoption: true,
+    race: "Chihuahua",
+    photo: "https://us.123rf.com/450wm/bluehand/bluehand1207/bluehand120700029/14398731-chiwawa-perro-en-el-c%C3%A9sped-en-el-parque.jpg",
+    owner: null
   },
 };
 
@@ -93,14 +111,22 @@ PetController.post("/", (req, res) => {
     !pet.name ||
     !pet.birth ||
     !pet.category ||
-    !pet.owner ||
     !PET_CATEGORIES[pet.category.id]
   ) {
     res.status(400).send("Missing required fields");
     return;
   }
-  PETS[++petCounter] = { ...pet, category: PET_CATEGORIES[pet.category.id] };
-  USERS[pet.owner-1].pets = USERS[pet.owner-1].pets + 1;
+  PETS[++petCounter] = {
+    ...pet,
+    id: petCounter,
+    category: PET_CATEGORIES[pet.category.id],
+    history: [],
+    inHostal: false,
+    inAdoption: pet.inAdoption || false,
+  };
+  if (pet.owner) {
+    USERS[pet.owner-1].pets = USERS[pet.owner-1].pets + 1;
+  }
   res.send(pet);
 });
 
@@ -115,7 +141,6 @@ PetController.put("/", (req, res) => {
     res.status(404).send("Pet not found");
     return;
   }
-
   if (pet.category) {
     if (!PET_CATEGORIES[pet.category.id]) {
       res.status(400).send("Invalid category");
@@ -127,6 +152,9 @@ PetController.put("/", (req, res) => {
     ...pet,
     ...(pet.category && { category: PET_CATEGORIES[pet.category.id] }),
   };
+  if (req.header("Is-Adopted") === "true") {
+    USERS[pet.owner-1].pets = USERS[pet.owner-1].pets + 1;
+  }
   res.sendStatus(200);
 });
 
