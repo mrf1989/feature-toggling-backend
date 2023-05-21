@@ -4,6 +4,6 @@ export interface VetAdscription {
   customerId: number,
   dates: {
     id: number,
-    date: Date
+    date: Date | string,
   }[]
 }

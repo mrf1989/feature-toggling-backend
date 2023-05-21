@@ -12,7 +12,7 @@ export const db: User[] = [
     "pricingType": PricingType.BASIC,
     "pets": 1,
     "vets": 1,
-    "dates": 2,
+    "dates": 0,
     "role": Role.CUSTOMER
   },
   {
@@ -31,8 +31,8 @@ export const db: User[] = [
     "password": "1234",
     "pricingType": PricingType.PRO,
     "pets": 3,
-    "vets": 2,
-    "dates": 1,
+    "vets": 0,
+    "dates": 0,
     "role": Role.ADMIN
   },
   {
