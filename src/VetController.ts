@@ -33,7 +33,7 @@ VetController.get("/customer/:id", (req, res) => {
   res.send(vets);
 });
 
-VetController.post("/", (req, res) => {
+VetController.put("/", (req, res) => {
   const vetId = req.body.vetId;
   const customerId = req.body.customerId;
   
@@ -55,6 +55,32 @@ VetController.post("/", (req, res) => {
     res.sendStatus(200);
   } else {  
     res.status(404).send("Vet not found");
+  }
+});
+
+VetController.post("/", (req, res) => {
+  const vetId = parseInt(req.body.vetId);
+  const customerId = parseInt(req.body.customerId);
+
+  if (!vetId || !customerId) {
+    res.status(400).send("Missing required fields");
+    return;
+  }
+
+  const vetAdscription = db.find(adscription =>
+    adscription.vetId == vetId && adscription.customerId == customerId);
+
+  if (vetAdscription) {
+    res.status(409).send("Vet already assigned to customer");
+  } else {
+    db.push({
+      id: ++vetCounter,
+      vetId: vetId,
+      customerId: customerId,
+      dates: []
+    });
+    USERS[customerId-1].vets = USERS[customerId-1].vets + 1;
+    res.sendStatus(200);
   }
 });
 
