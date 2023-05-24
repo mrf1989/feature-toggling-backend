@@ -5,7 +5,7 @@ export interface InputPet {
   category: { id: number, name: string },
   race: string,
   photo?: string,
-  history?: {
+  history: {
     id: number,
     date: string,
     comments: string
@@ -13,6 +13,12 @@ export interface InputPet {
   inHostal: boolean,
   inAdoption: boolean,
   owner: number
+}
+
+export interface PetHistory {
+  id: number,
+  date: string,
+  comments: string
 }
 
 export type OutputPet = Omit<InputPet, "category"> & {
