@@ -190,6 +190,10 @@ PetController.delete("/:petId", (req, res) => {
     res.status(404).send("Pet not found");
     return;
   }
+  const pet = PETS[petId];
+  if (pet.owner) {
+    USERS[pet.owner-1].pets = USERS[pet.owner-1].pets - 1;
+  }
   delete PETS[petId];
   res.sendStatus(200);
 });

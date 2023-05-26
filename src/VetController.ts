@@ -84,4 +84,23 @@ VetController.post("/", (req, res) => {
   }
 });
 
+VetController.delete("/customer/:customerId/vet/:vetId", (req, res) => {
+  const customerId: number = parseInt(req.params.customerId);
+  const vetId: number = parseInt(req.params.vetId);
+  const adscription = db.find(adscription =>
+    adscription.vetId == vetId && adscription.customerId == customerId);
+
+  if (!adscription) {
+    res.status(404).send("Vet not found");
+    return;
+  }
+
+  const adscriptionDatesSize = adscription.dates.length;
+  const id = adscription.id;
+  USERS[adscription.customerId-1].dates = USERS[adscription.customerId-1].dates - adscriptionDatesSize;
+  USERS[adscription.customerId-1].vets = USERS[adscription.customerId-1].vets - 1;
+  delete db[id-1];
+  res.status(200).send(adscription);
+});
+
 export default VetController;
