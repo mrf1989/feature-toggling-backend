@@ -48,7 +48,7 @@ VetController.put("/", (req, res) => {
   if (vetAdscription) {
     db[vetAdscription.id-1].dates.push({
       id: ++dateCounter,
-      date: new Date().toISOString(),
+      date: new Date(),
     });
 
     USERS[vetAdscription.customerId-1].dates = USERS[vetAdscription.customerId-1].dates + 1;
