@@ -28,8 +28,8 @@ const db: PricingPlan[] = [
   },
   {
     "type": PricingType.PRO,
-    "nVets": -1,
-    "nPets": -1,
+    "nVets": 5,
+    "nPets": 5,
     "nDates": 10,
     "veterinarySpecialities": ["all"],
     "advProfile": true,
