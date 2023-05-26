@@ -4,7 +4,7 @@ import { db as USERS } from "./UserController";
 
 let vetCounter = 0;
 let dateCounter = 0;
-const db: VetAdscription[] = [
+let db: VetAdscription[] = [
   {
     id: ++vetCounter,
     vetId: 4,
@@ -61,15 +61,15 @@ VetController.put("/", (req, res) => {
 VetController.post("/", (req, res) => {
   const vetId = parseInt(req.body.vetId);
   const customerId = parseInt(req.body.customerId);
-
+  
   if (!vetId || !customerId) {
     res.status(400).send("Missing required fields");
     return;
   }
-
+  
   const vetAdscription = db.find(adscription =>
     adscription.vetId == vetId && adscription.customerId == customerId);
-
+    
   if (vetAdscription) {
     res.status(409).send("Vet already assigned to customer");
   } else {
@@ -99,7 +99,7 @@ VetController.delete("/customer/:customerId/vet/:vetId", (req, res) => {
   const id = adscription.id;
   USERS[adscription.customerId-1].dates = USERS[adscription.customerId-1].dates - adscriptionDatesSize;
   USERS[adscription.customerId-1].vets = USERS[adscription.customerId-1].vets - 1;
-  delete db[id-1];
+  db = db.filter(adscription => adscription.id != id);
   res.status(200).send(adscription);
 });
 
