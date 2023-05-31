@@ -4,32 +4,33 @@ import { db as USERS } from "./UserController";
 
 let vetCounter = 0;
 let dateCounter = 0;
-let db: VetAdscription[] = [
-  {
-    id: ++vetCounter,
+const db: { [key: number]: VetAdscription } = {
+  [++vetCounter]: {
+    id: vetCounter,
     vetId: 4,
     customerId: 1,
     dates: []
   },
-  {
-    id: ++vetCounter,
+  [++vetCounter]: {
+    id: vetCounter,
     vetId: 4,
     customerId: 2,
     dates: []
   },
-  {
-    id: ++vetCounter,
+  [++vetCounter]: {
+    id: vetCounter,
     vetId: 5,
     customerId: 2,
     dates: []
   }
-]
+};
 
 const VetController = express.Router();
 
 VetController.get("/customer/:id", (req, res) => {
   const id = req.params.id;
-  const vets = db.filter(vet => vet.customerId == Number(id));
+  //const vets = db.filter(vet => vet.customerId == Number(id));
+  const vets = Object.values(db).filter(vet => vet.customerId == Number(id));
   res.send(vets);
 });
 
@@ -42,16 +43,16 @@ VetController.put("/", (req, res) => {
     return;
   }
   
-  const vetAdscription = db.find(adscription => 
+  const vetAdscription = Object.values(db).find(adscription =>
     adscription.vetId == vetId && adscription.customerId == customerId);
-    
+  
   if (vetAdscription) {
-    db[vetAdscription.id-1].dates.push({
+    db[vetAdscription.id].dates.push({
       id: ++dateCounter,
       date: new Date(),
     });
 
-    USERS[vetAdscription.customerId-1].dates = USERS[vetAdscription.customerId-1].dates + 1;
+    USERS[vetAdscription.customerId].dates = USERS[vetAdscription.customerId].dates + 1;
     res.sendStatus(200);
   } else {  
     res.status(404).send("Vet not found");
@@ -67,19 +68,19 @@ VetController.post("/", (req, res) => {
     return;
   }
   
-  const vetAdscription = db.find(adscription =>
+  const vetAdscription = Object.values(db).find(adscription =>
     adscription.vetId == vetId && adscription.customerId == customerId);
-    
+  
   if (vetAdscription) {
     res.status(409).send("Vet already assigned to customer");
   } else {
-    db.push({
-      id: ++vetCounter,
+    db[++vetCounter] = {
+      id: vetCounter,
       vetId: vetId,
       customerId: customerId,
       dates: []
-    });
-    USERS[customerId-1].vets = USERS[customerId-1].vets + 1;
+    };
+    USERS[customerId].vets = USERS[customerId].vets + 1;
     res.sendStatus(200);
   }
 });
@@ -87,7 +88,7 @@ VetController.post("/", (req, res) => {
 VetController.delete("/customer/:customerId/vet/:vetId", (req, res) => {
   const customerId: number = parseInt(req.params.customerId);
   const vetId: number = parseInt(req.params.vetId);
-  const adscription = db.find(adscription =>
+  const adscription = Object.values(db).find(adscription =>
     adscription.vetId == vetId && adscription.customerId == customerId);
 
   if (!adscription) {
@@ -97,9 +98,9 @@ VetController.delete("/customer/:customerId/vet/:vetId", (req, res) => {
 
   const adscriptionDatesSize = adscription.dates.length;
   const id = adscription.id;
-  USERS[adscription.customerId-1].dates = USERS[adscription.customerId-1].dates - adscriptionDatesSize;
-  USERS[adscription.customerId-1].vets = USERS[adscription.customerId-1].vets - 1;
-  db = db.filter(adscription => adscription.id != id);
+  USERS[adscription.customerId].dates = USERS[adscription.customerId].dates - adscriptionDatesSize;
+  USERS[adscription.customerId].vets = USERS[adscription.customerId].vets - 1;
+  delete db[id];
   res.status(200).send(adscription);
 });
 

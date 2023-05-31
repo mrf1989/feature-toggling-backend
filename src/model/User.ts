@@ -11,6 +11,7 @@ export interface User {
   pets: number,
   vets: number,
   dates: number,
+  photo: string,
   role: Role,
 }
 

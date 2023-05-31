@@ -131,7 +131,7 @@ PetController.post("/", (req, res) => {
     inAdoption: pet.inAdoption || false,
   };
   if (pet.owner) {
-    USERS[pet.owner-1].pets = USERS[pet.owner-1].pets + 1;
+    USERS[pet.owner].pets = USERS[pet.owner].pets + 1;
   }
   res.send(pet);
 });
@@ -159,7 +159,7 @@ PetController.put("/", (req, res) => {
     ...(pet.category && { category: PET_CATEGORIES[pet.category.id] }),
   };
   if (req.header("Is-Adopted") === "true") {
-    USERS[pet.owner-1].pets = USERS[pet.owner-1].pets + 1;
+    USERS[pet.owner].pets = USERS[pet.owner].pets + 1;
   }
   res.sendStatus(200);
 });
@@ -192,7 +192,7 @@ PetController.delete("/:petId", (req, res) => {
   }
   const pet = PETS[petId];
   if (pet.owner) {
-    USERS[pet.owner-1].pets = USERS[pet.owner-1].pets - 1;
+    USERS[pet.owner].pets = USERS[pet.owner].pets - 1;
   }
   delete PETS[petId];
   res.sendStatus(200);
